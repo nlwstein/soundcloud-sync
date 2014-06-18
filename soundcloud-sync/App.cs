@@ -20,8 +20,9 @@ namespace soundcloud_sync
             /* Get User Content based on passed type using GetUserId to determine userid based on username */
             collection = GetUserContent(GetUserID(username), type);
             /* Download using path. Error-correction on path designation slash */
-            if (!path[path.Length - 1].Equals(@"\")) { path = path + @"\"; }
-            path = path + username + @"\" + type;
+			/* For Windows x Visual Studio support, please just switch the direction of the slash */ 
+			if (!path[path.Length - 1].Equals(@"/")) { path = path + @"/"; }
+			path = path + username + @"/" + type;
             /* Download the collection! */
             downloader.DownloadCollection(collection, path);
             return true;

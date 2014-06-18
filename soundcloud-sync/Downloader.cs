@@ -24,7 +24,7 @@ namespace soundcloud_sync
             foreach (KeyValuePair<String, String> track in collection)
             {
                 /* Let's define what the file's name will eventually be */
-                String file = path + @"\" + track.Key + ".mp3";
+				String file = path + @"/" + track.Key + ".mp3";
                 if (!File.Exists(file))
                 {
                     /* Async grab the data as a byte array. We need our client ID here again... */

@@ -18,7 +18,7 @@ namespace soundcloud_sync
             /* If the user passes nothing into the command line, display help */
             if (args.Length < 2)
             {
-                System.Console.WriteLine(HelpContent);
+				System.Console.WriteLine (HelpContent);
             }
             else
             {
@@ -26,12 +26,16 @@ namespace soundcloud_sync
                 App app = new App();
                 
                 /* Capture our command line arguments */ 
-                String username = args[0];
-                String type = args[1];
-                String path = args[2];
+				String username = args[0];
+				String type = args[1];
+				String path = null;
+				/* If there is no third argument, set path to null so we don't throw a nullsetexception */ 
+				if (2 < args.Length) {
+					path = args [2];
+				}
 
                 /* Download the requested content to the requested path! */ 
-                app.Download(username, type, @path);
+				app.Download(username, type, @path);
             }
             /* This makes the app not quit suddenly when finished! */ 
             Console.Write("Press any key to exit...");
