@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace soundcloud_sync
@@ -10,21 +12,22 @@ namespace soundcloud_sync
 
     class App : SCAPI
     {
+        public static Dictionary<Guid, Tuple<DownloadType, String, String>> Collection { get; set; }
+        
         /* Highest level abstractions */
         public bool Download(String username, String type, String path)
         {
             /* Instantiate our classes */
             Downloader downloader = new Downloader();
-            /* Establish the collection */
-            Dictionary<String, String> collection = new Dictionary<String, String>();
+           
             /* Get User Content based on passed type using GetUserId to determine userid based on username */
-            collection = GetUserContent(GetUserID(username), type);
-            /* Download using path. Error-correction on path designation slash */
-			/* For Windows x Visual Studio support, please just switch the direction of the slash */ 
-			if (!path[path.Length - 1].Equals(@"/")) { path = path + @"/"; }
-			path = path + username + @"/" + type;
+            Collection = GetUserContent(GetUserID(username), type);
+            
+            /* Let's concatenate our path. */
+			path = Path.Combine(path,username,type);
+            
             /* Download the collection! */
-            downloader.DownloadCollection(collection, path);
+            downloader.DownloadCollection(Collection, path);
             return true;
         }
 

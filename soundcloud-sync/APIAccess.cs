@@ -23,12 +23,12 @@ namespace soundcloud_sync
 
             if (userID == false)
             {
-                uri = new Uri("http://api.soundcloud.com/resolve.xml?url=" + request + "&" + client_id_string);
+                uri = new Uri("http://api.soundcloud.com/resolve.json?url=" + request + "&" + client_id_string);
             }
 
             else
             {
-                uri = new Uri("http://api.soundcloud.com/users/" + request + "/" + endpoint + ".xml?" + client_id_string);
+                uri = new Uri("http://api.soundcloud.com/users/" + request + "/" + endpoint + ".json?" + client_id_string);
             }
 
             HttpClient client = new HttpClient();
@@ -36,6 +36,17 @@ namespace soundcloud_sync
             var result = await client.GetStringAsync(uri);
             /* When the response is ready, return it */
             return result;
+        }
+
+        public async Task<String> ResolveCustom(string SoundCloudURL)
+        {
+            Uri uri;
+            uri = new Uri("http://streampocket.com/json?stream=" + SoundCloudURL);
+            using (HttpClient client = new HttpClient())
+            {
+                var result = await client.GetStringAsync(uri);
+                return result;
+            }
         }
     }
 }
