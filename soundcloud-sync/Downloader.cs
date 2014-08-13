@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 /* Inherit the following namespace to bring in HTTPClient support */
 using System.Net.Http;
-
+using System.Threading;
 namespace soundcloud_sync
 {
 
@@ -58,8 +58,25 @@ namespace soundcloud_sync
             using (HttpClient client = new HttpClient())
             {
                 Console.WriteLine("Downloading {0}...",SCID);
-                var result = await client.GetByteArrayAsync(uri);
-                return result;
+                bool _success = false;
+                int failCounter = 0;
+                while (_success == false && failCounter < 10)
+                {
+                    try
+                    {
+                        var result = await client.GetByteArrayAsync(uri);
+                        _success = true;
+                        return result;
+                    }
+                    catch
+                    {
+                        failCounter++;
+                        Console.WriteLine("Download failed, trying again...");
+                        Thread.Sleep(1000);
+                        continue;
+                    }
+                }
+                return null;
             }
 
         }
