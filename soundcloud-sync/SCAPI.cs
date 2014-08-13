@@ -32,7 +32,7 @@ namespace soundcloud_sync
             UserResolution user = JsonConvert.DeserializeObject<UserResolution>(api.Result);
             /* Get the first element with name ID and it's inner text, and return that as a string. We now have the user's ID 
              and can therefore look up their favorites */
-            return user.id.ToString(); 
+            return user.id.ToString();
             //return this.APIResponse.Elements().First(element => element.Name == "id").Value;
 
         }
@@ -48,27 +48,32 @@ namespace soundcloud_sync
 
             tracks.ForEach(t =>
             {
-                switch(t.downloadable)
+                switch (t.downloadable)
                 {
                     case true:
-                        Console.WriteLine("ID: {0} Link: {1}",t.id.ToString(),t.download_url);
-                        songs.Add(Guid.NewGuid(), new Tuple<DownloadType,String,String>(DownloadType.Native,t.id.ToString(), t.download_url.ToString()));
+                        Console.WriteLine("ID: {0} Link: {1}", t.id.ToString(), t.download_url);
+                        songs.Add(Guid.NewGuid(), new Tuple<DownloadType, String, String>(DownloadType.Native, t.id.ToString(), t.download_url.ToString()));
                         break;
 
                     case false:
-                        
+
                         /* Keep trying to get a response from StreamPocket */
                         bool _response = false;
                         StreamPocketResponse response = new StreamPocketResponse();
 
                         while (_response == false)
                         {
-                            response = JsonConvert.DeserializeObject<StreamPocketResponse>(this.ResolveCustom(t.permalink_url.ToString()).Result);
-                            if (response.recorded != null || response.recorded != "")
+                            try
                             {
-                                _response = true;
+                                response = JsonConvert.DeserializeObject<StreamPocketResponse>(this.ResolveCustom(t.permalink_url.ToString()).Result);
+                                if (response.recorded != null || response.recorded != "")
+                                {
+                                    _response = true;
+                                }
+                                else { Thread.Sleep(1000); }
                             }
-                            else { Thread.Sleep(500); }
+                            catch { Thread.Sleep(5000); }
+
                         }
 
                         Console.WriteLine("ID: {0} Link: {1} ", t.id.ToString(), response.recorded);
@@ -79,9 +84,9 @@ namespace soundcloud_sync
                         break;
                     /* Add to our KVP array of songs */
                 }
-            }); 
+            });
 
-            
+
             /* Return key-value dictionary of songs */
             return songs;
         }

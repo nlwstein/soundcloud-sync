@@ -44,8 +44,15 @@ namespace soundcloud_sync
             uri = new Uri("http://streampocket.com/json?stream=" + SoundCloudURL);
             using (HttpClient client = new HttpClient())
             {
-                var result = await client.GetStringAsync(uri);
-                return result;
+                try
+                {
+                    var result = await client.GetStringAsync(uri);
+                    return result;
+                }
+                catch
+                {
+                    return null;
+                }
             }
         }
     }
