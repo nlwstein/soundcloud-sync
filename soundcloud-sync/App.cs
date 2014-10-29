@@ -25,7 +25,7 @@ namespace soundcloud_sync
             Collection = GetUserContent(GetUserID(username), type);
             
             /* Let's concatenate our path. */
-            if (path == null) { path = Assembly.GetAssembly(typeof(App)).Location; }
+            if (path == null) { path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); }
 			path = Path.Combine(path,username,type);
             
             /* Download the collection! */
