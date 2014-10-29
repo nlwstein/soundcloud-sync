@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 /* Inherit the following namespace to bring in Xml support */
 using Newtonsoft.Json;
+using System.Net;
 
 namespace soundcloud_sync
 {
@@ -37,6 +38,14 @@ namespace soundcloud_sync
 
         }
 
+        private string FetchDirectURL(string id)
+        {
+            using (WebClient wc = new WebClient())
+            {
+                return JsonConvert.DeserializeObject<mp3direct>(wc.DownloadString(@"https://api.sndcdn.com/i1/tracks/" + id + "/streams?client_id=65466a9abd127b6123e9415731d67e3d")).http_mp3_128_url;
+            }
+        }
+
         protected Dictionary<Guid, Tuple<DownloadType, String, String>> GetUserContent(string userID, string endpoint)
         {
             /* Get XML as XML Document */
@@ -51,34 +60,25 @@ namespace soundcloud_sync
                 switch (t.downloadable)
                 {
                     case true:
-                        Console.WriteLine("ID: {0} Link: {1}", t.id.ToString(), t.download_url);
+                        Console.WriteLine("ID: {0} -- Ready!", t.id.ToString());
                         songs.Add(Guid.NewGuid(), new Tuple<DownloadType, String, String>(DownloadType.Native, t.id.ToString(), t.download_url.ToString()));
                         break;
 
                     case false:
-
-                        /* Keep trying to get a response from StreamPocket */
-                        bool _response = false;
-                        StreamPocketResponse response = new StreamPocketResponse();
-
-                        while (_response == false)
+                        string url = FetchDirectURL(t.id.ToString());
+                        switch (string.IsNullOrWhiteSpace(url))
                         {
-                            try
-                            {
-                                response = JsonConvert.DeserializeObject<StreamPocketResponse>(this.ResolveCustom(t.permalink_url.ToString()).Result);
-                                if (response.recorded != null || response.recorded != "")
-                                {
-                                    _response = true;
-                                }
-                                else { Thread.Sleep(1000); }
-                            }
-                            catch { Thread.Sleep(5000); }
-
+                            case true:
+                                Console.WriteLine("Error with ID: {0} -- playlist or protected file?", t.id.ToString());
+                                break;
+                            case false:
+                                Console.WriteLine("ID: {0} -- Ready!", t.id.ToString());
+                                songs.Add(Guid.NewGuid(), new Tuple<DownloadType, String, String>(DownloadType.Custom, t.id.ToString(), url));
+                                break;
                         }
 
-                        Console.WriteLine("ID: {0} Link: {1} ", t.id.ToString(), response.recorded);
-                        songs.Add(Guid.NewGuid(), new Tuple<DownloadType, String, String>(DownloadType.Custom, t.id.ToString(), response.recorded));
                         break;
+
                     default:
                         Console.WriteLine("Failed to parse a song.");
                         break;

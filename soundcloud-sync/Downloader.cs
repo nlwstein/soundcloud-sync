@@ -64,6 +64,8 @@ namespace soundcloud_sync
                 {
                     try
                     {
+                        HttpResponseMessage actualURL = await client.GetAsync(uri);
+                        
                         var result = await client.GetByteArrayAsync(uri);
                         _success = true;
                         return result;

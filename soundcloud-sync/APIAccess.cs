@@ -41,7 +41,7 @@ namespace soundcloud_sync
         public async Task<String> ResolveCustom(string SoundCloudURL)
         {
             Uri uri;
-            uri = new Uri("http://streampocket.com/json?stream=" + SoundCloudURL);
+            uri = new Uri("http://streampocket.com/json2?stream=" + SoundCloudURL);
             using (HttpClient client = new HttpClient())
             {
                 try

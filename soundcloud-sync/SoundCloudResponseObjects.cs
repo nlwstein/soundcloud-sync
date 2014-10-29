@@ -66,6 +66,12 @@ namespace soundcloud_sync
         public string download_url { get; set; }
     }
 
+    public class mp3direct
+    {
+        public string http_mp3_128_url { get; set; }
+        public string preview_mp3_128_url { get; set; }
+    }
+
     public class UserResolution
     {
         public int id { get; set; }

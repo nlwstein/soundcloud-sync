@@ -15,13 +15,13 @@ namespace soundcloud_sync
         static void Main(string[] args)
         {
             //App app = new App();
-            //app.Download("digitalsteez", "favorites", @"C:\Test"); 
+            //app.Download("monstercat", "favorites", @"C:\Test"); 
             MainAppBehavior(args); 
         }
 
         static void MainAppBehavior(string[] args)
         {
-            String HelpContent = "Welcome to Soundcloud Sync! \nPlease use the following syntax: \nscsync.exe username type (favorites or tracks) path (optional)";
+            String HelpContent = "Welcome to Soundcloud Sync! \nPlease use the following syntax: \nsoundcloud-sync.exe username type (favorites or tracks) path (optional)";
             /* If the user passes nothing into the command line, display help */
             if (args.Length < 2)
             {
@@ -46,10 +46,6 @@ namespace soundcloud_sync
                 app.Download(username, type, @path);
                 //app.Download("digitalsteez", "favorites", @"C:\Test");
             }
-
-            /* This makes the app not quit suddenly when finished! */
-            Console.Write("Press any key to exit...");
-            Console.ReadKey();
         }
 
     }
